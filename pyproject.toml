@@ -1,0 +1,67 @@
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "wheel",
+    "numpy>=1.19.0"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nbody-simulation"
+version = "0.1.0"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+description = "High-performance N-body simulation using FFTW - converted from C to Python library"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+
+dependencies = [
+    "numpy>=1.19.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "black",
+    "flake8",
+    "twine",
+    "build",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yourusername/nbody-simulation"
+"Bug Reports" = "https://github.com/yourusername/nbody-simulation/issues"
+"Source" = "https://github.com/yourusername/nbody-simulation"
+
+[project.scripts]
+# Optional: command-line interface
+nbody-sim = "nbody.core:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+nbody = [
+    "data/input.nbody_comp",
+    "_nbody_c/fftw_static/lib/*.a",
+    "_nbody_c/fftw_static/include/*.h",
+    "_nbody_c/fftw_static/include/*/*.h",
+]
