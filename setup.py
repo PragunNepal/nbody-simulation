@@ -1,9 +1,6 @@
 import os
 import platform
 from pathlib import Path
-from pybind11.setup_helpers import Pybind11Extension, build_ext
-from pybind11 import get_cmake_dir
-import pybind11
 from setuptools import setup, Extension
 import numpy
 
@@ -32,14 +29,22 @@ def get_compile_args():
     system = platform.system()
     args = ["-O3", "-std=c99", "-Wall", "-Wno-unused-variable", "-Wno-unused-function"]
     
-    if system == "Darwin":  # macOS
-        # Use different OpenMP flags for macOS
-        args.extend(["-Xpreprocessor", "-fopenmp"])
-    elif system == "Windows":
-        # Windows-specific flags
-        args.extend(["-fopenmp"])  # MinGW supports this
-    else:  # Linux
+    # Only add OpenMP if not on macOS or if OpenMP is available
+    if system != "Darwin":  # Not macOS
         args.extend(["-fopenmp"])
+    else:  # macOS - try different approaches
+        try:
+            # Check if OpenMP is available
+            import subprocess
+            result = subprocess.run(["gcc", "--version"], capture_output=True, text=True)
+            if "gcc" in result.stdout.lower():
+                # If GCC is available, use it
+                args.extend(["-fopenmp"])
+            else:
+                # Skip OpenMP for now
+                print("Warning: OpenMP not available on macOS, building without parallel support")
+        except:
+            print("Warning: OpenMP detection failed, building without parallel support")
     
     return args
 
@@ -48,14 +53,18 @@ def get_link_args():
     system = platform.system()
     args = ["-lm"]
     
-    if system == "Darwin":  # macOS
-        # macOS OpenMP linking
-        args.extend(["-lomp"])
-    elif system == "Windows":
-        # Windows linking
+    if system != "Darwin":  # Not macOS
         args.extend(["-fopenmp", "-lpthread"])
-    else:  # Linux
-        args.extend(["-fopenmp", "-lpthread"])
+    else:  # macOS
+        args.extend(["-lpthread"])
+        # Try to add OpenMP linking if available
+        try:
+            import subprocess
+            result = subprocess.run(["gcc", "--version"], capture_output=True, text=True)
+            if "gcc" in result.stdout.lower():
+                args.extend(["-fopenmp"])
+        except:
+            pass
     
     return args
 
