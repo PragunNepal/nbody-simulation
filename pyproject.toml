@@ -65,3 +65,18 @@ nbody = [
     "_nbody_c/fftw_static/include/*.h",
     "_nbody_c/fftw_static/include/*/*.h",
 ]
+
+[tool.cibuildwheel.macos]
+before-all = [
+    "brew install libomp gcc",
+]
+
+[tool.cibuildwheel.windows] 
+before-all = [
+    "choco install mingw --no-progress --yes",
+]
+
+[tool.cibuildwheel.linux]
+before-all = [
+    "yum install -y gcc gcc-c++ make || (apt-get update && apt-get install -y gcc g++ make)",
+]
